@@ -1,58 +1,135 @@
+import time
+import json
+import os
+import shutil
+import csv
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+
+# Variables
+username="srinivasulu.kummitha@qualitestgroup.com"
+password=""
+downloadPath="C:\SrinivasCode\jiraBackup\Downloads\\"
+csv_file_name='data2.csv'
+
 options=webdriver.ChromeOptions()
 
-preferences = {"download.default_directory": "C:\SrinivasCode\jiraBackup\Downloads", "safebrowsing.enabled": "false"}
+settings = {
+    "recentDestinations": [{
+            "id": "Save as PDF",
+            "origin": "local",
+            "account": "",
+        }],
+        "selectedDestinationId": "Save as PDF",
+        "version": 2
+    }
+
+preferences = {'printing.print_preview_sticky_settings.appState': json.dumps(settings), "download.default_directory": downloadPath, "savefile.default_directory": downloadPath, "safebrowsing.enabled": "false"}
 
 options.add_experimental_option("prefs",preferences)
+options.add_argument('--kiosk-printing')
 
 driver = webdriver.Chrome(executable_path="./webDrivers/chromedriver.exe", chrome_options=options)
 
 driver.maximize_window()
 
-# Open Jira Website
+def login_to_jira():
+    # Open Jira Website
+    driver.get("https://onprem.atlassian.net/secure/Dashboard.jspa?lastVisited=true")
 
-driver.get("https://onprem.atlassian.net/secure/Dashboard.jspa?lastVisited=true")
+    # Log into Jira
+    driver.find_element(By.XPATH, "/html/body/div[6]/div[1]/div/div[1]/div/header/div/a/div/button").click() #Click Signin button
 
-# Log into Jira
+    # Enter Email
+    txtEmail=driver.find_element(By.XPATH, "//*[@id=\"username\"]")
+    txtEmail.send_keys(username)
+    txtEmail.send_keys(Keys.RETURN)
 
-driver.find_element(By.XPATH, "/html/body/div[6]/div[1]/div/div[1]/div/header/div/a/div/button").click() #Click Signin button
+    # Enter Password
+    driver.implicitly_wait(10)
+    txtPassword=driver.find_element(By.XPATH, "//*[@id=\"password\"]")
+    txtPassword.send_keys(password)
 
-# Enter Email
-txtEmail=driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div[2]/div[2]/div/section/div[2]/form/div[1]/div/div/div/div/div/input")
-txtEmail.send_keys("srinivasulu.kummitha@qualitestgroup.com")
-txtEmail.send_keys(Keys.RETURN)
+    # Click Enter to Signin
+    driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div[2]/div[2]/div/section/div[2]/form/div[3]/button").click()
 
-# Enter Password
-driver.implicitly_wait(10)
-txtPassword=driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div[2]/div[2]/div/section/div[2]/form/div[2]/div/div/div/div/div/div/div/input")
-txtPassword.send_keys("pwd here")
+def download_attachments(ticket_id):
+    # Open New Tab
+    time.sleep(10)
+    ticketURL="https://onprem.atlassian.net/secure/issueAttachments/"+ticket_id+".zip"
+    driver.execute_script('''window.open("'''+ticketURL+'''", "_blank");''')
+    time.sleep(15)
 
+def open_new_tab_pdf(ticketNumber):
+    # Open New Tab
+    time.sleep(3)
+    ticketURL="https://onprem.atlassian.net/si/jira.issueviews:issue-html/"+ticketNumber+"/"+ticketNumber+".html"
+    driver.execute_script('''window.open("'''+ticketURL+'''", "_blank");''')
+    time.sleep(5)
 
+def download_pdf():
+    # Open JIRA Print Page
+    driver.switch_to_window(driver.window_handles[1])
+    time.sleep(3)
+    # Print Jira to PDF
+    driver.execute_script('window.print();')
 
-# Click Enter to Signin
-driver.find_element(By.XPATH, "/html/body/div[1]/div/div/div/div[2]/div[2]/div/section/div[2]/form/div[3]/button").click()
-driver.implicitly_wait(10)
+def close_new_tab():
+    # Close current tab
+    driver.switch_to_window(driver.window_handles[1])
+    driver.close()
+    driver.switch_to_window(driver.window_handles[0])
+
+def close_driver():
+    # Close ChromeDriver
+    print("Closing ChromeDriver")
+    driver.quit()
+
+def move_files(ticketNumber):
+    source = "C:\SrinivasCode\jiraBackup\Downloads\\"
+    os.mkdir("C:\SrinivasCode\jiraBackup\Downloads\\"+ticketNumber)
+    dest = "C:\SrinivasCode\jiraBackup\Downloads\\"+ticketNumber
+
+    files = os.listdir(source)
+
+    for f in files:
+        if (f.startswith("[#"+ticketNumber)):
+            shutil.move(source+f, dest)
+        if (f.startswith(ticketNumber+".zip")):
+            shutil.move(source+f, dest)
+
+# Function Calls-----------------------------------------------------------------------------------------------------------------
+
+login_to_jira()
 
 # Start Loop
+print("Execution Started")
 
-# Open Jira Ticket URL
-driver.get("https://onprem.atlassian.net/browse/PVHDAM-1483")
+with open(csv_file_name, 'r') as file:
+    reader = csv.reader(file)
+    for row in reader:
+        ticketNumber=row[0]
+        ticket_id=row[1]
+        
+        # Download attachments of the ticket
+        download_attachments(str(ticket_id))
+        # download_attachments()
+        # close_new_tab()
 
-# Download Attachments
-driver.find_element(By.XPATH, "/html/body/div[1]/div[1]/div/div[3]/div[2]/div/div/div/div[2]/div[2]/div[2]/div[1]/div/div[1]/div/div[5]/div[5]/div/div[1]/div/div[1]/div/div/div[1]/div/div/button").click() #Click the 3 dots next to Attachments
+        # Download PDF file of the ticket
+        open_new_tab_pdf(str(ticketNumber))
+        download_pdf()
+        close_new_tab()
 
-driver.find_element(By.XPATH, "/html/body/div[1]/div[1]/div/div[3]/div[2]/div/div/div/div[2]/div[2]/div[2]/div[1]/div/div[1]/div/div[5]/div[5]/div/div[1]/div/div[1]/div/div/div[3]/div/div/div/div/div/span[2]/span[1]/span").click() #Click the Download All Link
+        # Move Files to appropriate folder
+        move_files(str(ticketNumber))
 
+        print("Downloaded Data of "+ticketNumber)
 
-# Open JIRA Print Page
+close_driver()
 
-# Print Jira to PDF
+print("Execution Completed")
 
-# End Loop
-
-# Close ChromeDriver
-# driver.close()
-
+# Function Calls-----------------------------------------------------------------------------------------------------------------
