@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 username="srinivasulu.kummitha@qualitestgroup.com"
 password=""
 downloadPath="D:\Onprem Jira Backup\\"
-csv_file_name='data2.csv'
+csv_file_name='data.csv'
 
 options=webdriver.ChromeOptions()
 
