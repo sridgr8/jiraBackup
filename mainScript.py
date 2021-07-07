@@ -11,7 +11,7 @@ from selenium.webdriver.common.keys import Keys
 # Variables
 username="srinivasulu.kummitha@qualitestgroup.com"
 password=""
-downloadPath="C:\SrinivasCode\jiraBackup\Downloads\\"
+downloadPath="D:\Onprem Jira Backup\\"
 csv_file_name='data2.csv'
 
 options=webdriver.ChromeOptions()
@@ -88,9 +88,9 @@ def close_driver():
     driver.quit()
 
 def move_files(ticketNumber):
-    source = "C:\SrinivasCode\jiraBackup\Downloads\\"
-    os.mkdir("C:\SrinivasCode\jiraBackup\Downloads\\"+ticketNumber)
-    dest = "C:\SrinivasCode\jiraBackup\Downloads\\"+ticketNumber
+    source = downloadPath
+    os.mkdir(downloadPath + ticketNumber)
+    dest = downloadPath + ticketNumber
 
     files = os.listdir(source)
 
