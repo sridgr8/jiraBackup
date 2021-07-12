@@ -122,11 +122,10 @@ with open(csv_file_name, 'r') as file:
         open_new_tab_pdf(str(ticketNumber))
         download_pdf()
         close_new_tab()
-
-        # Move Files to appropriate folder
-        move_files(str(ticketNumber))
-
         print("Downloaded Data of "+ticketNumber)
+
+# Move Files to appropriate folder
+move_files(str(ticketNumber))
 
 close_driver()
 
