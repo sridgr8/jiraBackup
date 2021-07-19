@@ -11,8 +11,8 @@ from selenium.webdriver.common.keys import Keys
 # Variables
 username="srinivasulu.kummitha@qualitestgroup.com"
 password=""
-downloadPath="D:\Onprem Jira Backup\\"
-csv_file_name='data.csv'
+downloadPath="D:\Onprem Jira Backup2\\"
+csv_file_name='data3.csv'
 
 options=webdriver.ChromeOptions()
 
@@ -122,7 +122,7 @@ with open(csv_file_name, 'r') as file:
         open_new_tab_pdf(str(ticketNumber))
         download_pdf()
         close_new_tab()
-        print("Downloaded Data of "+ticketNumber)
+        print("Downloaded Data of "+str(ticketNumber))
 
 # Move Files to appropriate folder
 move_files(str(ticketNumber))
