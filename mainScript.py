@@ -9,13 +9,14 @@ from selenium.webdriver.common.keys import Keys
 
 
 # Variables
-# username="srinivasulu.kummitha@qualitestgroup.com"
-username="SrinivasuluKummitha@pvh.com"
+username="srinivasulu.kummitha@qualitestgroup.com"
+# username="SrinivasuluKummitha@pvh.com"
 password="" # Add password before executing
-# projectname="PVHDAM"
-projectName="tpc-pvh"
-downloadPath="C:\Visulon Jira Backup\\"
-csv_file_name='data4.csv'
+projectname="PVHDAM"
+# projectName="tpc-pvh"
+downloadPath="C:\Onprem Jira Backup\\"
+# downloadPath="C:\Visulon Jira Backup\\"
+csv_file_name='data5.csv'
 
 options=webdriver.ChromeOptions()
 
