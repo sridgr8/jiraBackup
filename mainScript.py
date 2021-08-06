@@ -12,7 +12,7 @@ from selenium.webdriver.common.keys import Keys
 username="srinivasulu.kummitha@qualitestgroup.com"
 # username="SrinivasuluKummitha@pvh.com"
 password="" # Add password before executing
-projectname="PVHDAM"
+projectName="onprem"
 # projectName="tpc-pvh"
 downloadPath="C:\Onprem Jira Backup\\"
 # downloadPath="C:\Visulon Jira Backup\\"
