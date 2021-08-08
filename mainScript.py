@@ -10,9 +10,13 @@ from selenium.webdriver.common.keys import Keys
 
 # Variables
 username="srinivasulu.kummitha@qualitestgroup.com"
-password=""
-downloadPath="D:\Onprem Jira Backup\\"
-csv_file_name='data.csv'
+# username="SrinivasuluKummitha@pvh.com"
+password="" # Add password before executing
+projectName="onprem"
+# projectName="tpc-pvh"
+downloadPath="D:\Onprem Jira Backup Final\\"
+# downloadPath="C:\Visulon Jira Backup\\"
+csv_file_name='data6.csv'
 
 options=webdriver.ChromeOptions()
 
@@ -37,7 +41,7 @@ driver.maximize_window()
 
 def login_to_jira():
     # Open Jira Website
-    driver.get("https://onprem.atlassian.net/secure/Dashboard.jspa?lastVisited=true")
+    driver.get("https://"+projectName+".atlassian.net/secure/Dashboard.jspa?lastVisited=true")
 
     # Log into Jira
     driver.find_element(By.XPATH, "/html/body/div[6]/div[1]/div/div[1]/div/header/div/a/div/button").click() #Click Signin button
@@ -58,14 +62,14 @@ def login_to_jira():
 def download_attachments(ticket_id):
     # Open New Tab
     time.sleep(10)
-    ticketURL="https://onprem.atlassian.net/secure/issueAttachments/"+ticket_id+".zip"
+    ticketURL="https://"+projectName+".atlassian.net/secure/issueAttachments/"+ticket_id+".zip"
     driver.execute_script('''window.open("'''+ticketURL+'''", "_blank");''')
     time.sleep(15)
 
 def open_new_tab_pdf(ticketNumber):
     # Open New Tab
     time.sleep(3)
-    ticketURL="https://onprem.atlassian.net/si/jira.issueviews:issue-html/"+ticketNumber+"/"+ticketNumber+".html"
+    ticketURL="https://"+projectName+".atlassian.net/si/jira.issueviews:issue-html/"+ticketNumber+"/"+ticketNumber+".html"
     driver.execute_script('''window.open("'''+ticketURL+'''", "_blank");''')
     time.sleep(5)
 
@@ -122,10 +126,14 @@ with open(csv_file_name, 'r') as file:
         open_new_tab_pdf(str(ticketNumber))
         download_pdf()
         close_new_tab()
-        print("Downloaded Data of "+ticketNumber)
+        print("Downloaded Data of "+str(ticketNumber))
 
 # Move Files to appropriate folder
-move_files(str(ticketNumber))
+with open(csv_file_name, 'r') as file:
+        reader = csv.reader(file)
+        for row in reader:
+            ticketNumber=row[0]
+            move_files(ticketNumber)
 
 close_driver()
 
