@@ -14,9 +14,9 @@ username="srinivasulu.kummitha@qualitestgroup.com"
 password="" # Add password before executing
 projectName="onprem"
 # projectName="tpc-pvh"
-downloadPath="C:\Onprem Jira Backup\\"
+downloadPath="D:\Onprem Jira Backup Final\\"
 # downloadPath="C:\Visulon Jira Backup\\"
-csv_file_name='data5.csv'
+csv_file_name='data6.csv'
 
 options=webdriver.ChromeOptions()
 
